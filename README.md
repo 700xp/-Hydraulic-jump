@@ -1,2 +1,2 @@
-# -Hydraulic-jump
+# Hydraulic jump
 Student computer practice task
