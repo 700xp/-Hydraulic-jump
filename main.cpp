@@ -182,14 +182,15 @@ int main(void)
     for(int i = 0; i < 2; i++)
         RK2[i] = new double[n+1];
 
-    double R1, R2; //R1 - радиус для Rout, R2 - радиус для Rin
+    double R1, R2;  
+// R1 - radius of jump, R2 - radius of disk 
     int k1, k2, l_in1, l_out1, l_in2, l_out2;
     k1 = 0;
     k2 = 0;
     l_in1 = 0, l_in2 = 0;  
     l_out1 = 0, l_out2 = 0;
 
-    double* R = new double[m]; //сетка на отрезке [R1,R2]
+    double* R = new double[m];
 
     //start condition
     T[0] = a;
