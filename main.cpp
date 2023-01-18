@@ -89,7 +89,6 @@ double *Interpol_in(int m, int l, double R1, double R2, double *X, double *Y)
                 l ++;
             Y_Int[i] = Y[l] + (Y[l + 1] - Y[l]) * (R[i] - X[l]) / (X[l + 1] - X[l]);
         }
-        //if(f(R[0],YinINT[0])*f(R[i],YinINT[i]) < 0)
         if(fabs(R[i] - R2) < eps)
             break;
     }
@@ -116,11 +115,10 @@ double *Interpol_out(int m, int l, double R1, double R2, double *X, double *Y)
                 l ++;
             Y_Int[i] = Y[l] + (Y[l + 1] - Y[l]) * (R[i] - X[l]) / (X[l + 1] - X[l]);
         }
-//        if(f(R_inv[0],YoutINT[0])*f(R[i],YoutINT[i]) < 0)
         if(fabs(R[i] - R1) < eps)
             break;
     }
-    //переворачиваем массив Y_int
+    //reverse array Y_int
     double temp = 0;
     for(int i = 0; i < (m/2); i++)
     {
@@ -160,12 +158,12 @@ double Jump(int m, double *R, double *Y_in, double *Y_out)
 
 int main(void)
 {
-    //решение ищём на отрезке t \in [a,b] с шагом h
+    //solve for t in [a,b] with step h
     double a = 0;
     double b = 10;
     double h = 0.0001;
     int n = (b-a)/h;
-    int m = 1000; //размер массивов для интерполяции
+    int m = 1000; //size of interpol arrai
 
     double *T = new double[n+1];
 
@@ -188,12 +186,12 @@ int main(void)
     int k1, k2, l_in1, l_out1, l_in2, l_out2;
     k1 = 0;
     k2 = 0;
-    l_in1 = 0, l_in2 = 0;  //индекс в массиве Xin[i], которому соответствует R2
-    l_out1 = 0, l_out2 = 0; //индекс в массиве Xout[i], которому соответствует R1
+    l_in1 = 0, l_in2 = 0;  
+    l_out1 = 0, l_out2 = 0;
 
     double* R = new double[m]; //сетка на отрезке [R1,R2]
 
-    //начальные условия
+    //start condition
     T[0] = a;
 
     double Rf = 10;
@@ -220,26 +218,16 @@ int main(void)
     RK2[0][0] = Xin[0];
     RK2[1][0] = Yin[0];
 
-//    ofstream fout;
-//    fout.open("file_in.txt");
-//    ofstream gout;
-//    gout.open("file_out.txt");
-
-//    gout << Xout[0] <<"\t" << Yout[0] << endl;
-//    fout << Xin[0] <<"\t" << Yin[0] << endl;
-
     for(int i = 1; i < n+1; i++)
     {
         Xout[i] = RK1[0][i];
         Yout[i] = RK1[1][i];
-//        gout << Xout[i] <<"\t" << Yout[i] << endl;
     }
 
     for(int i = 1; i < n+1; i++)
     {
         Xin[i] = RK2[0][i];
         Yin[i] = RK2[1][i];
-//        fout << Xin[i] <<"\t" << Yin[i] << endl;
     }
 
 
@@ -258,14 +246,12 @@ int main(void)
             l_in2 = i;
         }
     }
-    //определяем какой по номеру в массиве внешнего решения по порядку идет элемент = R2
     for(int i = 0; i < l_out1; i++)
     {
         if(fabs(Xout[i] - R2) < 0.001)
             l_out2 = i;
     }
 
-    //определяем какой по номеру в массив внутреннего решения по порядку идет элемент = R1
     for (int i = 0; i < l_in2; i++)
     {
         if(fabs(Xin[i] - R1) < 0.005)
@@ -284,40 +270,13 @@ int main(void)
     YinINT[0] = Yin[l_in1];
 
 
-//    ofstream jout;
-//    jout.open("file_INT_in.txt");
-
-//    jout << R[0] << "\t" << YinINT[0] << endl;
-    YinINT = Interpol_in(m,l_in1,R1,R2,Xin,Yin);
-    for(int i = 1; i < m-1; i ++)
-//        jout << R[i] << "\t" << YinINT[i] << endl;
-//    jout.close();
-
-//    ofstream hout;
-//    hout.open("file_INT_out.txt");
 
     YoutINT = Interpol_out(m,l_out2,R1,R2,Xout,Yout);
     for(int i = 1; i < m-1; i++)
-//        hout << R[i] << "\t" << YoutINT[i] << endl;
-//    hout.close();
 
     R_jump = Jump(m,R,YinINT,YoutINT);
 
-
-//    ofstream kout;
-//    kout.open("file.txt");
-
-
     mout << Us <<"\t" << R_jump << endl;
-
-/*    for(int i = 1; i < m-1; i++)
-    {
-        if(R[i] <= R_jump)
-            kout << R[i] << "\t" << YinINT[i] << endl;
-        else
-            kout << R[i] << "\t" << YoutINT[i] << endl;
-    }
-    kout.close();*/
 
 }
 return 0;
